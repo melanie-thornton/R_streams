@@ -1,0 +1,77 @@
+---
+title: "Software_Carpentry_Capstone"
+author: "Melanie Thornton"
+date: "April 28, 2015"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+
+```{r, echo=FALSE, message=FALSE}
+#load wr
+setwd ("C:/Users/melan_000/Documents/swc-wsu")
+
+#load data
+gapminder  <- read.csv("gapminder.csv")
+
+##write a function that plots lifeExp vs gdpPercap across years for a selected country
+library(ggplot2)   
+library(dplyr)
+library(knitr)
+
+plot_country <- 
+  function(country, data=gapminder)
+  {
+    
+    thecountry <- country
+  
+  data %>%
+    filter(country==thecountry) %>%
+    ggplot(aes(x=year, y=gdpPercap)) +
+    geom_point() + geom_line() + 
+    ggtitle(thecountry)
+  }
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE, message=FALSE}
+plot_country("Switzerland")
+plot_country("Italy")
+plot_country("Spain")
+```
+
+This gapminder data has `r nrow(gapminder)` rows and `r ncol(gapminder)` columns.
+
+``` {r, life_exp, include=FALSE}
+le_2007 <- gapminder %>%
+  filter(year==2007) %>%
+  group_by(continent) %>%
+  summarize(Average=mean(lifeExp), Minimum=min(lifeExp), Maximum=max(lifeExp))
+```
+
+``` {r, tables, include=FALSE}
+kable(le_2007)
+```
+
+
+#histogram plot
+```{r, echo=FALSE, message=FALSE}
+gapminder %>%
+  filter(year==2007) %>%
+  group_by(continent) %>%
+  ggplot(aes(x=lifeExp, fill=continent)) + geom_histogram(binwidth=2.5, color="black")
+  
+  gapminder %>%
+  filter(year==2007) %>%
+  group_by(continent) %>%
+  ggplot(aes(x=lifeExp, fill=continent)) + geom_histogram(color="black")
+```
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
